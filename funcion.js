@@ -6,16 +6,16 @@ const Libro = function(nombre, precio, stock){
 }
 let producto1  = new Libro("Game of thrones", 5000,20)
 let producto2  = new Libro("Harry potter",65000,2)
-let producto3  = new Libro("Star wars",1650000,35)
-let producto4  = new Libro("India Blancas",1650000,98)
-let producto5  = new Libro("Como agua para chocolate",1650000,23)
-let producto6  = new Libro("Principito",1650000,65)
-let producto7  = new Libro("Indiana Jones",1650000,14)
+let producto3  = new Libro("Star wars",850000,35)
+let producto4  = new Libro("India Blancas",195000,98)
+let producto5  = new Libro("Como agua para chocolate",750000,23)
+let producto6  = new Libro("Principito",950000,65)
+let producto7  = new Libro("Indiana Jones",785000,14)
 
 let lista = [producto1,producto2,producto3,producto4,producto5,producto6,producto7]
 menu()
 function menu(){
-    let opcion = parseInt(prompt("1 - Agregar producto/n 2 - Mostrar productos/n 3 - Buscar producto/n 4 - Salir"))
+    let opcion = parseInt(prompt("1 - Agregar producto / 2 - Mostrar productos / 3 - Buscar producto / 4 - Salir"))
     switch(opcion){
         case 1:
             agregarProducto()
