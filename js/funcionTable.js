@@ -206,6 +206,11 @@ filtrar.addEventListener("click", buscarPorNombre)
 let filtrarGenero = document.getElementById("filtroGenero")
 filtrarGenero.addEventListener("click", buscarPorGenero)
 
+let filtrarartista = document.getElementById("filtroAPI")
+filtrarartista.addEventListener("click", buscarArtistaPorNombre)
+
+
+
 //agregar artista
 let crear= document.getElementById("crearArtista")
 crear.addEventListener("click", agregarArtista)
@@ -219,6 +224,50 @@ if(localStorage.getItem("artistas")){
 //actualizar la tabla
 const nuevosCantantes = JSON.parse(localStorage.getItem("artistas"));
 actualizarTabla(nuevosCantantes);
+
+// URL de la API
+
+const url = `https://musicbrainz.org/ws/2/artist?query=artist:*&limit=25&offset=${Math.floor(Math.random() * (1000 - 25))}&fmt=json`;
+
+function obtenerArtistasAleatorios() {
+  return fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const artistas = data.artists;
+    const tablaArtistas = document.getElementById('tablaArtitas');
+    
+    
+    
+
+    artistas.forEach(artista => {
+      const youtube = artista.urls && artista.urls.youtube ? artista.urls.youtube : 'null';
+      const instagram = artista.urls && artista.urls.instagram ? artista.urls.instagram : 'null';
+      const twitter = artista.urls && artista.urls.twitter ? artista.urls.twitter : 'null';
+      const pais = artista.area && artista.area.name ? artista.area.name : 'null';
+
+      const fila = `
+        <tr>
+          <td>${artista.name}</td>
+          <td>${artista.tags[0].name}</td>
+          <td><a href="${youtube}">${youtube}</a></td>
+          <td><a href="${instagram}">${instagram}</a></td>
+          <td><a href="${twitter}">${twitter}</a></td>
+          <td>${pais}</td>
+        </tr>
+      `;
+
+      tablaArtistas.innerHTML += fila;
+        
+    });
+    return artistas;  
+  })
+  .catch(error => console.error(error));
+   
+}
+
+obtenerArtistasAleatorios();
+
+
 
 
 
@@ -371,6 +420,9 @@ function buscarPorNombre(){
             palabraClave = palabraClave.trim().toUpperCase()
             let resultado = cantantes.filter( (producto)=> producto.nombre.toUpperCase().includes(palabraClave))
 
+
+
+            
             if(resultado.length >0){
                 Swal.fire({
                     title: 'este es el resultado de tu busqueda',
@@ -410,3 +462,58 @@ function buscarPorNombre(){
     })
 }
 
+function buscarArtistaPorNombre() {
+    try {
+        obtenerArtistasAleatorios().then(artistas => {
+            console.log('artistas:', artistas);
+            Swal.fire({
+              title: 'Buscar artista por nombre',
+              input: 'text',
+              showCancelButton: true,
+              confirmButtonText: 'Buscar',
+            preConfirm: (nombre) => {
+                console.log('nombre:', nombre);
+            const resultados = artistas.filter(artista => artista.name.toLowerCase().includes(nombre.toLowerCase()));
+                
+              if(resultados.length >0){
+                Swal.fire({
+                    title: 'este es el resultado de tu busqueda',
+                    html: `<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Genero</th>
+                            <th>Youtube</th>
+                            <th>Twitter</th>
+                            <th>Instagram</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Name</th>
+                            <th>Genero</th>
+                            <th>Youtube</th>
+                            <th>Twitter</th>
+                            <th>Instagram</th>
+                        </tr>
+                    </tfoot>`
+                    + 
+                    resultados.map(  (producto)=> `<tr><td>${producto.name}</td><td>${producto.tags[0].name}</td><td>${producto.youtube}</td><td>${producto.twitter}</td><td>${producto.instagram}</td></tr>`) +
+                
+                `</table>`})
+
+            }else{
+                Swal.fire({
+                    title:`no se encuentra coincidencias`,
+                    icon:'error',
+                    confirmButtonText: `ok`,
+                })
+            }
+            }
+          });
+        });
+    } catch (error) {
+        console.error(error);
+    }
+    
+  }
