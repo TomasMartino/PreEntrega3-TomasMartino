@@ -229,7 +229,7 @@ actualizarTabla(nuevosCantantes);
 
 const url = `https://musicbrainz.org/ws/2/artist?query=artist:*&limit=25&offset=${Math.floor(Math.random() * (1000 - 25))}&fmt=json`;
 
-function obtenerArtistasAleatorios() {
+async function obtenerArtistasAleatorios() {
   return fetch(url)
   .then(response => response.json())
   .then(data => {
@@ -240,6 +240,7 @@ function obtenerArtistasAleatorios() {
     
 
     artistas.forEach(artista => {
+      const tags = artista.tags && artista.tags[0].name ? artista.tags[0].name : 'null';
       const youtube = artista.urls && artista.urls.youtube ? artista.urls.youtube : 'null';
       const instagram = artista.urls && artista.urls.instagram ? artista.urls.instagram : 'null';
       const twitter = artista.urls && artista.urls.twitter ? artista.urls.twitter : 'null';
@@ -248,7 +249,7 @@ function obtenerArtistasAleatorios() {
       const fila = `
         <tr>
           <td>${artista.name}</td>
-          <td>${artista.tags[0].name}</td>
+          <td>${tags}</td>
           <td><a href="${youtube}">${youtube}</a></td>
           <td><a href="${instagram}">${instagram}</a></td>
           <td><a href="${twitter}">${twitter}</a></td>
@@ -464,16 +465,19 @@ function buscarPorNombre(){
 
 function buscarArtistaPorNombre() {
     try {
-        obtenerArtistasAleatorios().then(artistas => {
-            console.log('artistas:', artistas);
-            Swal.fire({
-              title: 'Buscar artista por nombre',
-              input: 'text',
-              showCancelButton: true,
-              confirmButtonText: 'Buscar',
-            preConfirm: (nombre) => {
-                console.log('nombre:', nombre);
-            const resultados = artistas.filter(artista => artista.name.toLowerCase().includes(nombre.toLowerCase()));
+      
+        
+      obtenerArtistasAleatorios().then(artistas => {
+      console.log('artistas:', artistas);
+      Swal.fire({
+        title: 'Buscar artista por nombre',
+        input: 'text',
+        showCancelButton: true,
+        confirmButtonText: 'Buscar',
+        preConfirm: (nombre) => {
+          console.log('nombre:', nombre);
+          const resultados = artistas.filter(artista => artista.name.toLowerCase().includes(nombre.toLowerCase()));
+         
                 
               if(resultados.length >0){
                 Swal.fire({
